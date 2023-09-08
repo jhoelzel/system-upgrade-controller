@@ -35,4 +35,4 @@ jobs:
         git config --local user.name "GitHub Action"
         git add kustomization.yaml
         git commit -m "Update kustomization.yaml with the latest release tag $RELEASE_TAG"
-        git push origin refs/heads/master  
+        git push origin master  
