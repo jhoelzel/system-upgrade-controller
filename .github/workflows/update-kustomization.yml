@@ -1,0 +1,36 @@
+name: Update Kustomization Image Tag
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  update-kustomization:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup Kustomize
+      run: |
+        curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash
+        sudo mv kustomize /usr/local/bin/
+
+    - name: Get the latest release tag
+      id: latest-release
+      run: |
+        TAG_NAME=$(curl --silent "https://api.github.com/repos/$GITHUB_REPOSITORY/releases/latest" | jq -r .tag_name)
+        echo "RELEASE_TAG=$TAG_NAME" >> $GITHUB_ENV
+
+    - name: Update kustomization.yaml with the latest tag
+      run: |
+        kustomize edit set image rancher/system-upgrade-controller=$RELEASE_TAG
+
+    - name: Commit and push changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add kustomization.yaml
+        git commit -m "Update kustomization.yaml with the latest release tag $RELEASE_TAG"
+        git push
