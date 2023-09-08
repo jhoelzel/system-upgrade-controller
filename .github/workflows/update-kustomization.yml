@@ -11,7 +11,9 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-
+      with:
+        ref: refs/heads/master  
+        
     - name: Setup Kustomize
       run: |
         curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash
@@ -33,4 +35,4 @@ jobs:
         git config --local user.name "GitHub Action"
         git add kustomization.yaml
         git commit -m "Update kustomization.yaml with the latest release tag $RELEASE_TAG"
-        git push
+        git push origin refs/heads/master  
