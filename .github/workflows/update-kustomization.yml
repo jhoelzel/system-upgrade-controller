@@ -11,8 +11,11 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-      with:
-        ref: HEAD:master  
+        
+    - name: Switch to default branch
+      run: |
+        git fetch
+        git checkout main  # or "master" if your default branch is named "master"
         
     - name: Setup Kustomize
       run: |
@@ -35,4 +38,4 @@ jobs:
         git config --local user.name "GitHub Action"
         git add kustomization.yaml
         git commit -m "Update kustomization.yaml with the latest release tag $RELEASE_TAG"
-        git push origin HEAD:master  
+        git push origin master  
